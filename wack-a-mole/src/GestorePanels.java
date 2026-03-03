@@ -1,4 +1,5 @@
 
+import java.awt.Container;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -12,12 +13,12 @@ import javax.swing.JPanel;
  * @author sergi
  */
 public class GestorePanels {
-    Form form;
+    Container container;
     GestoreGioco g;
     JPanel[] panels;
 
-    public GestorePanels(Form form, GestoreGioco g, JPanel[] panels) {
-        this.form = form;
+    public GestorePanels(Container container, GestoreGioco g, JPanel[] panels) {
+        this.container = container;
         this.g = g;
         this.panels = panels;
     }
@@ -28,6 +29,7 @@ public class GestorePanels {
         
         panels[buco].revalidate();
         panels[buco].repaint();
+        
         g.startThread();
     }
     

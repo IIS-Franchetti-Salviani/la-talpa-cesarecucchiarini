@@ -4,8 +4,7 @@
  */
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -20,40 +19,53 @@ public class Talpa extends JButton implements Runnable{
     private JPanel buco;
     private Thread thread;
     private volatile int altezza = 10;
+    private int crescita;
+    private int larghezza;
+    private int altezzaMax;
     
-    public Talpa(int punti){
+    public Talpa(int punti, int larghezza, int altezza){
         this.punti=punti;
-        this.setPreferredSize(new Dimension(100,10));
-        this.setText("talpa");
+        crescita = (int) Math.ceil(altezza/10);
+        this.altezzaMax = altezza;
+        this.larghezza = larghezza;
+        this.setPreferredSize(new Dimension(larghezza,crescita));
+        
+        this.setContentAreaFilled(false);
+        this.setBorderPainted(false);
+        this.setFocusPainted(false);
+        this.setOpaque(false);
+        this.setVerticalAlignment(TOP);
+        
+        this.setIcon(new ImageIcon("src/talpa.png"));
     }
     
     public void esci(){
         cliccabile = true;
-        while(this.getSize().height < 100 && cliccabile){
+        while(altezza < altezzaMax && cliccabile){
             try{
-                Thread.sleep(100);
+                Thread.sleep(50);
+                SwingUtilities.invokeLater(() ->{
+                    altezza+=crescita;
+                    this.setPreferredSize(new Dimension(larghezza, altezza));
+                    buco.revalidate();
+                    buco.repaint();
+                });
             }
-            catch(InterruptedException e){}
-            SwingUtilities.invokeLater(() ->{
-                altezza+=10;
-                this.setPreferredSize(new Dimension(this.getSize().width, altezza));
-                buco.revalidate();
-                buco.repaint();
-            });
+            catch(InterruptedException e){}         
         }
     }
     
     public void entra(){
         cliccabile = false;
-        while(altezza > 0){
+        while(altezza > crescita){
             try{
-                Thread.sleep(100);
+                Thread.sleep(50);
             }
             catch(InterruptedException e){}
             altezza-=10;
             SwingUtilities.invokeLater(()->{
-                altezza-=10;
-                this.setPreferredSize(new Dimension(this.getSize().width, altezza));
+                altezza-=crescita;
+                this.setPreferredSize(new Dimension(larghezza, altezza));
                 buco.revalidate();
                 buco.repaint();
             });
@@ -76,9 +88,10 @@ public class Talpa extends JButton implements Runnable{
     public void run(){
         esci();
         try {
-            Thread.sleep(2000);
-        } 
-        catch (InterruptedException ex){System.out.println(ex.getMessage());}
+            if(cliccabile)
+                Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){}
         
         entra();
     }

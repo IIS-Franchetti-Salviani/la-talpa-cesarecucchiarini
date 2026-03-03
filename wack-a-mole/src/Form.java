@@ -3,9 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -16,29 +14,56 @@ public class Form extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Form.class.getName());
     
-    JButton[] bottoni;
-    GestoreGioco g;
-    GestorePanels gp;
-    JPanel[] panels = new JPanel[9];
-    /**
-     * Creates new form Form
-     */
+    private GestoreGioco g;
+    private GestorePanels gp;
+    private JPanel[] panels = new JPanel[9];
+    private JPanel campo;
+    private Timer timerTalpa;
+    
     public Form() {
         initComponents();
-        g = new GestoreGioco(new Talpa(3), new Giocatore());
-        this.setLayout(new GridLayout(3, 3));
+        this.setSize(new Dimension(1000,800));
+        this.setLayout(new BorderLayout());       
+        
+        campo = new JPanel();
+        campo.setBackground(Color.GREEN);
+        campo.setLayout(new GridLayout(3, 3, 30, 0));      
         
         for (int i = 0; i < 9; i++) {
-            JPanel p = new JPanel();
-            p.setLayout(new FlowLayout());
-            p.setBorder(BorderFactory.createLineBorder(Color.black));
+            JPanel p = new JPanel(){
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2d = (Graphics2D) g.create();
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                    g2d.setColor(Color.black);
+                    g2d.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
+
+                    g2d.dispose();
+                }
+            };
+            p.setLayout(new BorderLayout());
+            p.setOpaque(false);
             panels[i] = p;
-            this.add(p);
+            campo.add(p);
         }
         
-        gp = new GestorePanels(this, g, panels);
+        this.add(campo, BorderLayout.CENTER);
         
-        gp.talpaUscita();
+        //da togliere dopo
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent e) {
+                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore());
+                gp = new GestorePanels(campo, g, panels);
+            }
+        });
+        
+        //da modificare per creare una race tra threads
+        timerTalpa = new Timer(3200, e ->{
+            gp.talpaUscita();
+        });
+        timerTalpa.start();
     }
 
     /**

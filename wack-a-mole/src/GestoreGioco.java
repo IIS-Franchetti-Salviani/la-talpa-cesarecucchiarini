@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,7 @@ public class GestoreGioco {
     }
     public void assegnaTalpa(JPanel buco){
         talpa.setBuco(buco);
-        buco.add(talpa);
+        buco.add(talpa, BorderLayout.SOUTH);
     }
     public Talpa getTalpa(){
         return talpa;
