@@ -1,0 +1,51 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+direction TB
+    class Talpa {
+      -punti : int
+
+      +run()
+      +esci()
+      +entra()
+      +aspetta()
+      +getPunti() : int
+    }
+
+    class GestoreGioco {
+      -tempo : int
+
+      +assegnaTalpa()
+      +guadagnaPunti()
+      +perdiPunti()
+      +finisciGioco()
+      +getBottoni() : ArrayList
+      +GestoreGioco(tempo : int, giocatore : Giocatore, gestore : GestoreTalpa, buche : ArrayList)
+    }
+
+    class FileManager{
+        
+    }
+
+    class Giocatore {
+	    -punti : int
+	    -nome : String
+
+      +Giocatore(nome : String)
+      +getNome() : String
+      +getPunti() : int
+      +aggiungiPunti(punti : int)
+    }
+
+    class Form{
+
+    }
+
+    Talpa --|> JButton
+    Talpa ..|> Runnable
+    GestoreGioco "1" --> "9" JButton
+    GestoreGioco "1" --> "1" Giocatore
+    GestoreGioco "1" o-- "1" Talpa
+    Form --> GestoreGioco
