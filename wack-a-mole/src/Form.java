@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package wack.a.mole;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import javax.swing.*;
 
@@ -17,23 +18,27 @@ public class Form extends javax.swing.JFrame {
     
     JButton[] bottoni;
     GestoreGioco g;
+    GestorePanels gp;
+    JPanel[] panels = new JPanel[9];
     /**
      * Creates new form Form
      */
     public Form() {
         initComponents();
         g = new GestoreGioco(new Talpa(3), new Giocatore());
-        bottoni = g.getBottoni();
-        
-        this.getContentPane().setLayout(new GridLayout(3, 3));
+        this.setLayout(new GridLayout(3, 3));
         
         for (int i = 0; i < 9; i++) {
             JPanel p = new JPanel();
-            p.add(bottoni[i]);
-            this.getContentPane().add(p);
+            p.setLayout(new FlowLayout());
+            p.setBorder(BorderFactory.createLineBorder(Color.black));
+            panels[i] = p;
+            this.add(p);
         }
         
-        g.assegnaTalpa();
+        gp = new GestorePanels(this, g, panels);
+        
+        gp.talpaUscita();
     }
 
     /**
