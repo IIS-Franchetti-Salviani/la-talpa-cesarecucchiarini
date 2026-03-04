@@ -1,6 +1,5 @@
 
-import java.awt.Container;
-import javax.swing.JButton;
+
 import javax.swing.JPanel;
 
 /*
@@ -13,24 +12,19 @@ import javax.swing.JPanel;
  * @author sergi
  */
 public class GestorePanels {
-    Container container;
     GestoreGioco g;
     JPanel[] panels;
 
-    public GestorePanels(Container container, GestoreGioco g, JPanel[] panels) {
-        this.container = container;
+    public GestorePanels(GestoreGioco g, JPanel[] panels) {
         this.g = g;
         this.panels = panels;
     }
     
-    public void talpaUscita(){
-        int buco = g.scegliBuco();
+    public void talpaUscita(Talpa talpa, int buco){
         g.assegnaTalpa(panels[buco]);
         
         panels[buco].revalidate();
         panels[buco].repaint();
-        
-        g.startThread();
     }
     
 }

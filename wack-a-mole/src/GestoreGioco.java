@@ -4,11 +4,9 @@
  */
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
@@ -18,20 +16,25 @@ import javax.swing.JPanel;
 public class GestoreGioco {
     Talpa talpa;
     Giocatore g;
+    GestorePanels gestore;
 
-    public GestoreGioco(Talpa talpa, Giocatore g) {
+    public GestoreGioco(Talpa talpa, Giocatore g, GestorePanels gestore) {
         this.g = g;
         this.talpa = talpa;
+        this.gestore = gestore;
+        
         this.talpa.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae){
                 g.aggiungiPunti(talpa.colpita());
+                
             }
         });
     }
     
-    public int scegliBuco(){
-        return new Random().nextInt(9);
+    public void scegliBuco(){
+        gestore.talpaUscita(talpa, new Random().nextInt(9));
+        startThread();
     }
     public void assegnaTalpa(JPanel buco){
         talpa.setBuco(buco);
@@ -42,7 +45,7 @@ public class GestoreGioco {
     }
     
     public void startThread(){
-        talpa.startThread(); //la talpa non si resiza bene
+        talpa.startThread();
     }
     
 }

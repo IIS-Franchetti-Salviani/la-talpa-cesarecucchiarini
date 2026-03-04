@@ -4,6 +4,8 @@
  */
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.*;
 
 /**
@@ -25,6 +27,14 @@ public class Form extends javax.swing.JFrame {
         this.setSize(new Dimension(1000,800));
         this.setLayout(new BorderLayout());       
         
+        preparaCampo();
+        
+        
+        
+        
+    }
+    
+    public void preparaCampo(){
         campo = new JPanel();
         campo.setBackground(Color.GREEN);
         campo.setLayout(new GridLayout(3, 3, 30, 0));      
@@ -54,14 +64,13 @@ public class Form extends javax.swing.JFrame {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowOpened(java.awt.event.WindowEvent e) {
-                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore());
-                gp = new GestorePanels(campo, g, panels);
+                gp = new GestorePanels(g, panels);
+                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), gp);              
             }
         });
-        
         //da modificare per creare una race tra threads
         timerTalpa = new Timer(3200, e ->{
-            gp.talpaUscita();
+            g.scegliBuco();
         });
         timerTalpa.start();
     }

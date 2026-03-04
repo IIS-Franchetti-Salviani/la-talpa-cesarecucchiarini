@@ -4,6 +4,7 @@
  */
 
 import java.awt.Dimension;
+import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -25,7 +26,7 @@ public class Talpa extends JButton implements Runnable{
     
     public Talpa(int punti, int larghezza, int altezza){
         this.punti=punti;
-        crescita = (int) Math.ceil(altezza/10);
+        crescita = (int) Math.ceil(altezza/10.0);
         this.altezzaMax = altezza;
         this.larghezza = larghezza;
         this.setPreferredSize(new Dimension(larghezza,crescita));
@@ -41,6 +42,7 @@ public class Talpa extends JButton implements Runnable{
     
     public void esci(){
         cliccabile = true;
+        altezza = crescita;
         while(altezza < altezzaMax && cliccabile){
             try{
                 Thread.sleep(50);
@@ -62,7 +64,6 @@ public class Talpa extends JButton implements Runnable{
                 Thread.sleep(50);
             }
             catch(InterruptedException e){}
-            altezza-=10;
             SwingUtilities.invokeLater(()->{
                 altezza-=crescita;
                 this.setPreferredSize(new Dimension(larghezza, altezza));
@@ -86,14 +87,14 @@ public class Talpa extends JButton implements Runnable{
     
     @Override
     public void run(){
-        esci();
-        try {
-            if(cliccabile)
-                Thread.sleep(2000);
-        }
-        catch (InterruptedException ex){}
-        
-        entra();
+            esci();
+            try {
+                if(cliccabile)
+                    Thread.sleep(2000);
+            }
+            catch (InterruptedException ex){}
+
+            entra();
     }
 
     public void setBuco(JPanel buco) {
