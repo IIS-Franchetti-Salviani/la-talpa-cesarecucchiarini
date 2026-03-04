@@ -17,7 +17,6 @@ public class Form extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Form.class.getName());
     
     private GestoreGioco g;
-    private GestorePanels gp;
     private JPanel[] panels = new JPanel[9];
     private JPanel campo;
     private Timer timerTalpa;
@@ -27,11 +26,7 @@ public class Form extends javax.swing.JFrame {
         this.setSize(new Dimension(1000,800));
         this.setLayout(new BorderLayout());       
         
-        preparaCampo();
-        
-        
-        
-        
+        preparaCampo(); 
     }
     
     public void preparaCampo(){
@@ -64,15 +59,10 @@ public class Form extends javax.swing.JFrame {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowOpened(java.awt.event.WindowEvent e) {
-                gp = new GestorePanels(g, panels);
-                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), gp);              
+                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels);  
+                g.start();
             }
         });
-        //da modificare per creare una race tra threads
-        timerTalpa = new Timer(3200, e ->{
-            g.scegliBuco();
-        });
-        timerTalpa.start();
     }
 
     /**

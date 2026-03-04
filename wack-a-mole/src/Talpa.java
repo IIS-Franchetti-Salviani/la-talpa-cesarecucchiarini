@@ -5,6 +5,7 @@
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.util.concurrent.Semaphore;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -23,6 +24,7 @@ public class Talpa extends JButton implements Runnable{
     private int crescita;
     private int larghezza;
     private int altezzaMax;
+    private Semaphore lock;
     
     public Talpa(int punti, int larghezza, int altezza){
         this.punti=punti;
@@ -38,6 +40,10 @@ public class Talpa extends JButton implements Runnable{
         this.setVerticalAlignment(TOP);
         
         this.setIcon(new ImageIcon("src/talpa.png"));
+    }
+    
+    public void setSemaphore(Semaphore lock){
+        this.lock = lock;
     }
     
     public void esci(){
@@ -86,15 +92,19 @@ public class Talpa extends JButton implements Runnable{
     }
     
     @Override
-    public void run(){
-            esci();
-            try {
-                if(cliccabile)
-                    Thread.sleep(2000);
-            }
-            catch (InterruptedException ex){}
+    public  void run(){
+        esci();
+        try {
+            if(cliccabile)
+                Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){}
 
-            entra();
+        entra();
+        
+        try{
+            lock.release();
+        }catch(Exception e){}
     }
 
     public void setBuco(JPanel buco) {
@@ -105,5 +115,8 @@ public class Talpa extends JButton implements Runnable{
         thread = new Thread(this);
         thread.start();
     }
- 
+    
+    public boolean getStato(){
+        return cliccabile;
+    }
 }
