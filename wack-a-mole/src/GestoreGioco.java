@@ -8,7 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -19,18 +21,20 @@ public class GestoreGioco extends Thread{
     private Giocatore g;
     private JPanel[] panels;
     private Semaphore lock = new Semaphore(0);
+    private JLabel labelPunti;
+    private IntBox box = new IntBox();
 
-    public GestoreGioco(Talpa talpa, Giocatore g, JPanel[] panels) {
+    public GestoreGioco(Talpa talpa, Giocatore g, JPanel[] panels, JLabel labelPunti) {
         this.g = g;
         this.talpa = talpa;
         talpa.setSemaphore(lock);
         this.panels = panels;
+        this.labelPunti = labelPunti;
         
         this.talpa.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae){
-                g.aggiungiPunti(talpa.colpita());
-                
+                talpa.colpita();
             }
         });
     }
@@ -53,7 +57,11 @@ public class GestoreGioco extends Thread{
     }
     
     @Override
-    public void run(){    
+    public void run(){  
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException ex) {
+        }
         while(true){
             scegliBuco();
             try{

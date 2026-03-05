@@ -25,6 +25,7 @@ public class Talpa extends JButton implements Runnable{
     private int larghezza;
     private int altezzaMax;
     private Semaphore lock;
+    private IntBox box;
     
     public Talpa(int punti, int larghezza, int altezza){
         this.punti=punti;
@@ -45,6 +46,9 @@ public class Talpa extends JButton implements Runnable{
     public void setSemaphore(Semaphore lock){
         this.lock = lock;
     }
+    public void setBox(IntBox box){
+        this.box = box;
+    }
     
     public void esci(){
         cliccabile = true;
@@ -64,6 +68,11 @@ public class Talpa extends JButton implements Runnable{
     }
     
     public void entra(){
+        synchronized(box){
+            box.aggiungiPunti(cliccabile ? punti : -punti);
+            box.notify();
+        }
+        
         cliccabile = false;
         while(altezza > crescita){
             try{
@@ -82,13 +91,11 @@ public class Talpa extends JButton implements Runnable{
         buco.repaint();
     }
     
-    public int colpita(){
+    public void colpita(){
         if(cliccabile){
             cliccabile = false;
             thread.interrupt();
-            return punti;
-        }       
-        return 0;
+        }
     }
     
     @Override
@@ -99,7 +106,7 @@ public class Talpa extends JButton implements Runnable{
                 Thread.sleep(2000);
         }
         catch (InterruptedException ex){}
-
+        
         entra();
         
         try{

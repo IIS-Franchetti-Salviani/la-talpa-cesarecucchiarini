@@ -5,16 +5,18 @@
 
 /**
  *
- * @author cucchiarini.cesare
+ * @author sergi
  */
-public class Giocatore {
-    private int punti;
+public class IntBox {
+    int punti = 0;
     
-    public void aggiungiPunti(int punti){
-        this.punti+=punti;
+    public int prendiPunti(){
+        int t = punti;
+        punti = 0;
+        return t;
     }
     
-    public int getPunti(){
-        return punti;
+    public void aggiungiPunti(int punti){
+        this.punti += punti;
     }
 }

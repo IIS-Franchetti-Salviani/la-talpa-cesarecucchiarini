@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 /**
  *
@@ -19,14 +20,29 @@ public class Form extends javax.swing.JFrame {
     private GestoreGioco g;
     private JPanel[] panels = new JPanel[9];
     private JPanel campo;
-    private Timer timerTalpa;
+    private JLabel tempo;
+    private JLabel punteggio;
+    private JPanel infos;
     
     public Form() {
         initComponents();
-        this.setSize(new Dimension(1000,800));
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLayout(new BorderLayout());       
         
-        preparaCampo(); 
+        preparaCampo();
+        preparaPunteggio();        
+        
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent e) {
+                infos.setPreferredSize(new Dimension(e.getWindow().getWidth()/5, 0));
+                infos.revalidate();
+                infos.repaint();
+                
+                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, punteggio);  
+                g.start();
+            }
+        });
     }
     
     public void preparaCampo(){
@@ -54,15 +70,34 @@ public class Form extends javax.swing.JFrame {
         }
         
         this.add(campo, BorderLayout.CENTER);
+    }
+    public void preparaPunteggio(){
+        infos = new JPanel();
+        infos.setLayout(new BoxLayout(infos, BoxLayout.Y_AXIS));
         
-        //da togliere dopo
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowOpened(java.awt.event.WindowEvent e) {
-                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels);  
-                g.start();
-            }
-        });
+        tempo = new JLabel("30");
+        tempo.setAlignmentX(CENTER_ALIGNMENT);
+        punteggio = new JLabel("0");
+        punteggio.setAlignmentX(CENTER_ALIGNMENT);
+        
+        Font f = new Font(tempo.getFont().getFontName(), Font.PLAIN, 40);
+        tempo.setFont(f);
+        punteggio.setFont(f);
+        
+        Border b = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 3), 
+                BorderFactory.createLineBorder(Color.BLACK));
+        b = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), b);
+        tempo.setBorder(b);
+        punteggio.setBorder(b);
+        
+        infos.add(Box.createVerticalGlue());     
+        infos.add(tempo);
+        infos.add(Box.createRigidArea(new Dimension(0, 30)));       
+        infos.add(punteggio);
+        infos.add(Box.createVerticalGlue());
+        
+        infos.setBackground(Color.WHITE);
+        this.add(infos, BorderLayout.EAST);
     }
 
     /**
