@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -20,14 +19,13 @@ public class GestoreGioco extends Thread{
     private Talpa talpa;
     private Giocatore g;
     private JPanel[] panels;
-    private Semaphore lock = new Semaphore(0);
     private JLabel labelPunti;
     private IntBox box = new IntBox();
 
     public GestoreGioco(Talpa talpa, Giocatore g, JPanel[] panels, JLabel labelPunti) {
         this.g = g;
         this.talpa = talpa;
-        talpa.setSemaphore(lock);
+        talpa.setBox(box);
         this.panels = panels;
         this.labelPunti = labelPunti;
         
@@ -63,10 +61,12 @@ public class GestoreGioco extends Thread{
         } catch (InterruptedException ex) {
         }
         while(true){
-            scegliBuco();
-            try{
-                lock.acquire();
-            }catch(Exception e){}
+            synchronized(box){
+                scegliBuco();
+                try {
+                    box.wait();
+                } catch (InterruptedException ex) {}
+            }
         }
     }
 }

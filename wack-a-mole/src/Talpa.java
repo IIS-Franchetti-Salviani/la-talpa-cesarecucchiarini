@@ -5,7 +5,6 @@
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.util.concurrent.Semaphore;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -24,7 +23,6 @@ public class Talpa extends JButton implements Runnable{
     private int crescita;
     private int larghezza;
     private int altezzaMax;
-    private Semaphore lock;
     private IntBox box;
     
     public Talpa(int punti, int larghezza, int altezza){
@@ -43,9 +41,6 @@ public class Talpa extends JButton implements Runnable{
         this.setIcon(new ImageIcon("src/talpa.png"));
     }
     
-    public void setSemaphore(Semaphore lock){
-        this.lock = lock;
-    }
     public void setBox(IntBox box){
         this.box = box;
     }
@@ -67,13 +62,8 @@ public class Talpa extends JButton implements Runnable{
         }
     }
     
-    public void entra(){
-        synchronized(box){
-            box.aggiungiPunti(cliccabile ? punti : -punti);
-            box.notify();
-        }
+    public void entra(){ 
         
-        cliccabile = false;
         while(altezza > crescita){
             try{
                 Thread.sleep(50);
@@ -89,6 +79,11 @@ public class Talpa extends JButton implements Runnable{
         buco.remove(this);
         buco.revalidate();
         buco.repaint();
+        synchronized(box){
+            box.aggiungiPunti(cliccabile ? punti : -punti);
+            box.notify();
+        }
+        cliccabile = false;
     }
     
     public void colpita(){
@@ -100,18 +95,16 @@ public class Talpa extends JButton implements Runnable{
     
     @Override
     public  void run(){
-        esci();
-        try {
-            if(cliccabile)
-                Thread.sleep(2000);
+        synchronized(box){
+            esci();
+            try {
+                if(cliccabile)
+                    Thread.sleep(2000);
+            }
+            catch (InterruptedException ex){}
+
+            entra();
         }
-        catch (InterruptedException ex){}
-        
-        entra();
-        
-        try{
-            lock.release();
-        }catch(Exception e){}
     }
 
     public void setBuco(JPanel buco) {

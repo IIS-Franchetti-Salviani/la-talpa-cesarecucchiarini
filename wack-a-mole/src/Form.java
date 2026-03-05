@@ -41,6 +41,7 @@ public class Form extends javax.swing.JFrame {
                 
                 g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, punteggio);  
                 g.start();
+                
             }
         });
     }
