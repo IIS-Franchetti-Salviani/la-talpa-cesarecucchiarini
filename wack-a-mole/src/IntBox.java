@@ -10,13 +10,11 @@
 public class IntBox {
     int punti = 0;
     
-    public int prendiPunti(){
-        int t = punti;
-        punti = 0;
-        return t;
+    public int getPunti(){
+        return punti;
     }
     
-    public void aggiungiPunti(int punti){
-        this.punti += punti;
+    public void setPunti(int punti){
+        this.punti = punti;
     }
 }

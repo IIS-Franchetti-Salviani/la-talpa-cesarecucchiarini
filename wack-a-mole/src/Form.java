@@ -23,6 +23,10 @@ public class Form extends javax.swing.JFrame {
     private JLabel tempo;
     private JLabel punteggio;
     private JPanel infos;
+    private IntBox box = new IntBox();
+    private int punti = 0;
+    private Timer timer;
+    private Thread threadPunteggio;
     
     public Form() {
         initComponents();
@@ -32,16 +36,44 @@ public class Form extends javax.swing.JFrame {
         preparaCampo();
         preparaPunteggio();        
         
+        
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowOpened(java.awt.event.WindowEvent e) {
-                infos.setPreferredSize(new Dimension(e.getWindow().getWidth()/5, 0));
-                infos.revalidate();
-                infos.repaint();
-                
-                g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, punteggio);  
-                g.start();
-                
+                new Thread(()-> {
+                    infos.setPreferredSize(new Dimension(e.getWindow().getWidth()/5, 0));
+                    infos.revalidate();
+                    infos.repaint();
+
+                    g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, box);      
+                    threadPunteggio = new Thread(()->{
+                        boolean flag = true;
+                        synchronized(box){
+                            while(flag){
+                                try {
+                                    box.wait();
+                                } catch (InterruptedException ex) {flag = false;}
+                                punti += box.getPunti();
+                                punteggio.setText(""+punti);
+                            }
+                        }
+                    });
+                    timer = new Timer(1000, ex->{
+                        tempo.setText((Integer.parseInt(tempo.getText())-1) +"");
+                        if(tempo.getText().equals("0")){
+                            g.interrupt();
+                            timer.stop();
+                            threadPunteggio.interrupt();
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException ex) {}
+                    threadPunteggio.start();
+                    g.start();
+                    timer.start();
+                }).start();           
             }
         });
     }

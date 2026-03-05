@@ -19,15 +19,14 @@ public class GestoreGioco extends Thread{
     private Talpa talpa;
     private Giocatore g;
     private JPanel[] panels;
-    private JLabel labelPunti;
-    private IntBox box = new IntBox();
+    private IntBox box;
 
-    public GestoreGioco(Talpa talpa, Giocatore g, JPanel[] panels, JLabel labelPunti) {
+    public GestoreGioco(Talpa talpa, Giocatore g, JPanel[] panels, IntBox box) {
         this.g = g;
+        this.box = box;
         this.talpa = talpa;
         talpa.setBox(box);
         this.panels = panels;
-        this.labelPunti = labelPunti;
         
         this.talpa.addActionListener(new ActionListener(){
             @Override
@@ -50,22 +49,24 @@ public class GestoreGioco extends Thread{
         talpa.setBuco(buco);
         buco.add(talpa, BorderLayout.SOUTH);
     }
+    
     public Talpa getTalpa(){
         return talpa;
     }
     
     @Override
-    public void run(){  
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex) {
-        }
-        while(true){
+    public void run(){
+        boolean flag = true;
+        while(flag){
             synchronized(box){
                 scegliBuco();
                 try {
                     box.wait();
-                } catch (InterruptedException ex) {}
+                } catch (InterruptedException ex) {
+                    flag = false;
+                    
+                }
+                g.aggiungiPunti(box.getPunti());
             }
         }
     }

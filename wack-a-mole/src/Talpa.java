@@ -44,6 +44,9 @@ public class Talpa extends JButton implements Runnable{
     public void setBox(IntBox box){
         this.box = box;
     }
+    public void setThread(Thread thread){
+        this.thread = thread;
+    }
     
     public void esci(){
         cliccabile = true;
@@ -62,8 +65,7 @@ public class Talpa extends JButton implements Runnable{
         }
     }
     
-    public void entra(){ 
-        
+    public void entra(){        
         while(altezza > crescita){
             try{
                 Thread.sleep(50);
@@ -80,8 +82,8 @@ public class Talpa extends JButton implements Runnable{
         buco.revalidate();
         buco.repaint();
         synchronized(box){
-            box.aggiungiPunti(cliccabile ? punti : -punti);
-            box.notify();
+            box.setPunti(!cliccabile ? punti : -punti);
+            box.notifyAll();
         }
         cliccabile = false;
     }
@@ -101,7 +103,7 @@ public class Talpa extends JButton implements Runnable{
                 if(cliccabile)
                     Thread.sleep(2000);
             }
-            catch (InterruptedException ex){}
+            catch (InterruptedException ex){if(cliccabile) return;}
 
             entra();
         }
@@ -118,5 +120,9 @@ public class Talpa extends JButton implements Runnable{
     
     public boolean getStato(){
         return cliccabile;
+    }
+    
+    public void stopThread(){
+        thread.interrupt();
     }
 }
