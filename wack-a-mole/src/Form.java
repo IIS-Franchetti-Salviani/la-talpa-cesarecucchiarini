@@ -4,6 +4,8 @@
  */
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.*;
@@ -27,18 +29,30 @@ public class Form extends javax.swing.JFrame {
     private int punti = 0;
     private Timer timer;
     private Thread threadPunteggio;
+    private JButton bottoneAvvio = new JButton("Avvia Gioco");
+    private JPanel intro;
     
     public Form() {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setLayout(new BorderLayout());       
-        
-        campo = GeneratoreInterfaccia.preparaCampo(panels);
-        infos = GeneratoreInterfaccia.preparaPunteggio(tempo, punteggio);
-        
+        this.setLayout(new BorderLayout());
         this.add(campo, BorderLayout.CENTER);
         this.add(infos, BorderLayout.EAST);
-        preparaLogica();
+        this.add(intro, BorderLayout.CENTER);
+        
+        bottoneAvvio.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                campo = GeneratoreInterfaccia.preparaCampo(panels);
+                infos = GeneratoreInterfaccia.preparaPunteggio(tempo, punteggio);
+                
+                campo.revalidate();
+                campo.repaint();
+                infos.revalidate();
+                infos.repaint();
+                preparaLogica();
+            }
+        });
     }
     
     

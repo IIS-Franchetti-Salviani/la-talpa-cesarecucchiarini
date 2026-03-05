@@ -84,6 +84,10 @@ public class GeneratoreInterfaccia{
         JPanel intro = new JPanel();
         intro.setLayout(new BoxLayout(intro, BoxLayout.Y_AXIS));
         
+        intro.add(Box.createVerticalGlue());
+        intro.add(bottoneAvvio);
+        intro.add(Box.createVerticalGlue());
+        
         return intro;
     }
 }
