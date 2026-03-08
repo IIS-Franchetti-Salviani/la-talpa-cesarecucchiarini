@@ -31,72 +31,76 @@ public class Form extends javax.swing.JFrame {
     private Thread threadPunteggio;
     private JButton bottoneAvvio = new JButton("Avvia Gioco");
     private JPanel intro;
+    private int tempoRimasto = 30;
     
     public Form() {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLayout(new BorderLayout());
-        this.add(campo, BorderLayout.CENTER);
-        this.add(infos, BorderLayout.EAST);
+        intro = GeneratoreInterfaccia.preparaIntro(bottoneAvvio);
         this.add(intro, BorderLayout.CENTER);
+        this.setVisible(true);
         
         bottoneAvvio.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                campo = GeneratoreInterfaccia.preparaCampo(panels);
-                infos = GeneratoreInterfaccia.preparaPunteggio(tempo, punteggio);
-                
-                campo.revalidate();
-                campo.repaint();
-                infos.revalidate();
-                infos.repaint();
+                preparaCampo();
                 preparaLogica();
             }
         });
     }
     
     
-    public void preparaLogica(){
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowOpened(java.awt.event.WindowEvent e) {
-                new Thread(()-> {
-                    infos.setPreferredSize(new Dimension(e.getWindow().getWidth()/5, 0));
-                    infos.revalidate();
-                    infos.repaint();
-
-                    g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, box);      
-                    threadPunteggio = new Thread(()->{
-                        boolean flag = true;
-                        synchronized(box){
-                            while(flag){
-                                try {
-                                    box.wait();
-                                } catch (InterruptedException ex) {flag = false;}
-                                punti += box.getPunti();
-                                punteggio.setText(""+punti);
-                            }
-                        }
-                    });
-                    timer = new Timer(1000, ex->{
-                        tempo.setText((Integer.parseInt(tempo.getText())-1) +"");
-                        if(tempo.getText().equals("0")){
-                            g.interrupt();
-                            timer.stop();
-                            threadPunteggio.interrupt();
-                        }
-                    });
-
+    public void preparaLogica(){       
+        threadPunteggio = new Thread(()->{
+            boolean flag = true;
+            synchronized(box){
+                while(flag){
                     try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException ex) {}
-                    threadPunteggio.start();
-                    g.start();
-                    timer.start();
-                }).start();           
+                        box.wait();
+                    } catch (InterruptedException ex) {flag = false;}
+                    if(flag){
+                        punti += box.getPunti();
+                        punteggio.setText(""+punti);
+                    }
+                }
             }
         });
+        timer = new Timer(1000, ex->{
+            tempo.setText((--tempoRimasto) +"");
+            if(tempoRimasto == 0){
+                g.interrupt();
+                timer.stop();
+                threadPunteggio.interrupt();
+            }
+        });
+        
+        SwingUtilities.invokeLater(()->{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {}
+            g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, box);
+            threadPunteggio.start();
+            g.start();
+            timer.start();
+        });
     }
+    
+    public void preparaCampo(){
+        campo = GeneratoreInterfaccia.preparaCampo(panels);
+        infos = GeneratoreInterfaccia.preparaPunteggio(tempo, punteggio);
+        infos.setPreferredSize(new Dimension(this.getWidth()/5, 0));
+        
+        this.add(campo, BorderLayout.CENTER);
+        this.add(infos, BorderLayout.EAST);
+        
+        this.remove(intro);
+        campo.revalidate();
+        campo.repaint();
+        infos.revalidate();
+        infos.repaint();
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

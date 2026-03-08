@@ -20,6 +20,7 @@ public class GestoreGioco extends Thread{
     private Giocatore g;
     private JPanel[] panels;
     private IntBox box;
+    private ActionListener l;
 
     public GestoreGioco(Talpa talpa, Giocatore g, JPanel[] panels, IntBox box) {
         this.g = g;
@@ -28,12 +29,13 @@ public class GestoreGioco extends Thread{
         talpa.setBox(box);
         this.panels = panels;
         
-        this.talpa.addActionListener(new ActionListener(){
+        l = new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae){
                 talpa.colpita();
             }
-        });
+        };
+        this.talpa.addActionListener(l);
     }
     
     public void scegliBuco(){
@@ -56,17 +58,18 @@ public class GestoreGioco extends Thread{
     
     @Override
     public void run(){
-        boolean flag = true;
-        while(flag){
-            synchronized(box){
+        boolean flag = true;       
+        synchronized(box){
+            while(flag){
                 scegliBuco();
                 try {
                     box.wait();
-                } catch (InterruptedException ex) {
+                } catch (Exception ex) {
                     flag = false;
-                    
+                    talpa.fermata();
                 }
-                g.aggiungiPunti(box.getPunti());
+                if(flag)
+                    g.aggiungiPunti(box.getPunti());
             }
         }
     }

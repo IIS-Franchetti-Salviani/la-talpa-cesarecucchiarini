@@ -24,6 +24,7 @@ public class Talpa extends JButton implements Runnable{
     private int larghezza;
     private int altezzaMax;
     private IntBox box;
+    private boolean gioco = true;
     
     public Talpa(int punti, int larghezza, int altezza){
         this.punti=punti;
@@ -82,7 +83,7 @@ public class Talpa extends JButton implements Runnable{
         buco.revalidate();
         buco.repaint();
         synchronized(box){
-            box.setPunti(!cliccabile ? punti : -punti);
+            box.setPunti(!cliccabile && gioco ? punti : -punti);
             box.notifyAll();
         }
         cliccabile = false;
@@ -94,17 +95,20 @@ public class Talpa extends JButton implements Runnable{
             thread.interrupt();
         }
     }
+    public void fermata(){
+        gioco = false;
+        thread.interrupt();     
+    }
     
     @Override
     public  void run(){
         synchronized(box){
             esci();
             try {
-                if(cliccabile)
+                if(cliccabile && gioco)
                     Thread.sleep(2000);
             }
-            catch (InterruptedException ex){if(cliccabile) return;}
-
+            catch (InterruptedException ex){}
             entra();
         }
     }
