@@ -55,6 +55,10 @@ public class GestoreGioco extends Thread{
     public Talpa getTalpa(){
         return talpa;
     }
+
+    public Giocatore getGiocatore() {
+        return g;
+    }
     
     @Override
     public void run(){
@@ -64,7 +68,7 @@ public class GestoreGioco extends Thread{
                 scegliBuco();
                 try {
                     box.wait();
-                } catch (Exception ex) {
+                } catch (InterruptedException ex) {
                     flag = false;
                     talpa.fermata();
                 }

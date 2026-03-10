@@ -9,6 +9,7 @@
  */
 public class Giocatore {
     private int punti;
+    private String nome;
     
     public void aggiungiPunti(int punti){
         this.punti+=punti;
@@ -16,5 +17,13 @@ public class Giocatore {
     
     public int getPunti(){
         return punti;
+    }
+    
+    public void setNome(String nome){
+        this.nome = nome;
+    }
+    
+    public String getNome(){
+        return nome;
     }
 }

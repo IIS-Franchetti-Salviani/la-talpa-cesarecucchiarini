@@ -68,10 +68,11 @@ public class Form extends javax.swing.JFrame {
         });
         timer = new Timer(1000, ex->{
             tempo.setText((--tempoRimasto) +"");
-            if(tempoRimasto == 0){
+            if(tempoRimasto == 25){
                 g.interrupt();
                 timer.stop();
                 threadPunteggio.interrupt();
+                JOptionPane.showMessageDialog(campo, "Complimenti! Il tuo punteggio è: "+g.getGiocatore().getPunti());
             }
         });
         

@@ -83,6 +83,8 @@ public class GeneratoreInterfaccia{
     public static JPanel preparaIntro(JButton bottoneAvvio){
         JPanel intro = new JPanel();
         intro.setLayout(new BoxLayout(intro, BoxLayout.Y_AXIS));
+        bottoneAvvio.setAlignmentX(CENTER_ALIGNMENT);
+        bottoneAvvio.setPreferredSize(new Dimension(50,50));
         
         intro.add(Box.createVerticalGlue());
         intro.add(bottoneAvvio);
