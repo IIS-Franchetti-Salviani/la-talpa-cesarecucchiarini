@@ -11,8 +11,10 @@ import java.awt.RenderingHints;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -84,10 +86,25 @@ public class GeneratoreInterfaccia{
         JPanel intro = new JPanel();
         intro.setLayout(new BoxLayout(intro, BoxLayout.Y_AXIS));
         bottoneAvvio.setAlignmentX(CENTER_ALIGNMENT);
-        bottoneAvvio.setPreferredSize(new Dimension(50,50));
+        bottoneAvvio.setPreferredSize(new Dimension(300,150));
+        bottoneAvvio.setMinimumSize(bottoneAvvio.getPreferredSize());
+        bottoneAvvio.setMaximumSize(bottoneAvvio.getPreferredSize());
+        
+        DefaultListModel<String> model = new DefaultListModel<>();
+        String[] split;
+        for(String s : ManagerClassifica.getClassifica()){
+            model.addElement(s.replaceFirst(",", " - "));
+        }
+        
+        JList<String> list = new JList(model);
+        list.setFont(new Font("Serif", Font.PLAIN, 24));
+        list.setBackground(Color.white);
+        list.setBorder(BorderFactory.createLineBorder(Color.black));
         
         intro.add(Box.createVerticalGlue());
         intro.add(bottoneAvvio);
+        intro.add(Box.createRigidArea(new Dimension(0, 30)));
+        intro.add(list);
         intro.add(Box.createVerticalGlue());
         
         return intro;

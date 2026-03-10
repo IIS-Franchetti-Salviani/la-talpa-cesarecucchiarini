@@ -68,13 +68,26 @@ public class GestoreGioco extends Thread{
                 scegliBuco();
                 try {
                     box.wait();
-                } catch (InterruptedException ex) {
+                } 
+                catch (InterruptedException ex) {
                     flag = false;
                     talpa.fermata();
+                    fineGioco();
                 }
                 if(flag)
                     g.aggiungiPunti(box.getPunti());
             }
         }
+    }
+    
+    public void fineGioco(){
+        ManagerClassifica.creaClassifica();
+        if(ManagerClassifica.controllaClassifica(g.getPunti())){
+            ManagerClassifica.aggiungiGiocatore(g);
+        }
+    }
+    
+    public void impostaNome(String nome){
+        g.setNome(nome);
     }
 }

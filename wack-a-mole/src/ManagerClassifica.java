@@ -22,7 +22,7 @@ public class ManagerClassifica {
             String[] split;
             while((l=r.readLine()) != null){
                 split = l.split(",");
-                punteggi.put( (Integer) Integer.parseInt(split[0]), split[1]);
+                punteggi.put( (Integer) Integer.parseInt(split[1]), split[0]);
             }
         }
         catch(IOException e){}
@@ -38,15 +38,26 @@ public class ManagerClassifica {
     
     public static void aggiungiGiocatore(Giocatore giocatore){
         punteggi.put(giocatore.getPunti(), giocatore.getNome());
+        aggiornaClassifica();
     }
     
     public static void aggiornaClassifica(){
         try(BufferedWriter w = new BufferedWriter(new FileWriter("classifica.csv"))){
-            for(Set<Integer,String> es : punteggi.entrySet()){
-                w.write(Entry.);
-            }
-            
+            int i = 0;
+            for(Entry<Integer,String> entry : punteggi.reversed().entrySet()){
+                w.write(entry.getValue()+","+entry.getKey()+"\n");
+                if(++i > 5) break;
+            }  
         }
         catch(IOException e){}
+    }
+    
+    public static String[] getClassifica(){
+        String[] strings = new String[punteggi.size()];
+        int i = 0;
+        for(Entry<Integer,String> entry : punteggi.reversed().entrySet()){
+            strings[i++] = entry.getKey() + "," + entry.getValue();
+        }
+        return strings;
     }
 }

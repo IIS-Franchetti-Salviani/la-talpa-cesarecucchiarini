@@ -34,6 +34,8 @@ public class Form extends javax.swing.JFrame {
     private int tempoRimasto = 30;
     
     public Form() {
+        ManagerClassifica.creaClassifica();
+        
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLayout(new BorderLayout());
@@ -43,7 +45,7 @@ public class Form extends javax.swing.JFrame {
         
         bottoneAvvio.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e){  
                 preparaCampo();
                 preparaLogica();
             }
@@ -68,19 +70,33 @@ public class Form extends javax.swing.JFrame {
         });
         timer = new Timer(1000, ex->{
             tempo.setText((--tempoRimasto) +"");
-            if(tempoRimasto == 25){
+            if(tempoRimasto == 0){
                 g.interrupt();
                 timer.stop();
                 threadPunteggio.interrupt();
                 JOptionPane.showMessageDialog(campo, "Complimenti! Il tuo punteggio è: "+g.getGiocatore().getPunti());
+                if(ManagerClassifica.controllaClassifica(g.getGiocatore().getPunti()))
+                    JOptionPane.showMessageDialog(campo, "Complimenti!!! Hai guadagnato un posto nella classifica!");
+
             }
         });
         
         SwingUtilities.invokeLater(()->{
+            g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, box);
+            String nome = JOptionPane.showInputDialog("Inserisci il nome");
+            while(true){
+                if(nome == null)
+                    nome = JOptionPane.showInputDialog("Inserisci il nome, non lasciare vuoto");
+                else if(nome.isBlank())
+                    nome = JOptionPane.showInputDialog("Inserisci il nome, non lasciare vuoto");
+                else 
+                    break;
+            }
+            g.impostaNome(nome);
+            
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {}
-            g = new GestoreGioco(new Talpa(3, campo.getSize().width/3, campo.getSize().height/3), new Giocatore(), panels, box);
             threadPunteggio.start();
             g.start();
             timer.start();
